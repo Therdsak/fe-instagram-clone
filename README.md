@@ -22,7 +22,7 @@
 
 
 ```bash
-git clone <url ของ repo>
+git clone https://github.com/Therdsak/fe-instagram-clone.git
 cd instagram-clone
 ```
 
