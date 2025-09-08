@@ -36,3 +36,29 @@
     transform: rotate(360deg);
   }
 }
+
+
+@keyframes fadeAndScale {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
+
+@media (max-width: 600px) {
+  .ant-layout-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+}
+
