@@ -1,61 +1,81 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import Post from "./Post";
 
-import { useQuery } from '@tanstack/react-query';
-import { fetchPokemons } from '../api/fetchPokemons.ts';
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchPokemons } from "../api/fetchPokemons.ts";
 
 const Feed = ({ searchTerm, onRequireLogin }) => {
-  const [allPosts, setAllPosts] = useState([]);
-  const [searchPosts, setSearchPosts] = useState([]);
-  const [hasMore, setHasMore] = useState(false); // ไม่มี infinite scroll แล้วถ้าใช้ API จริง
-  // const loader = useRef(null);
+  const loader = useRef(null);
 
-  // ดึงข้อมูล Pokemon จาก API ด้วย react-query
-  const { data, isLoading, error } = useQuery({
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error,
+  } = useInfiniteQuery({
     queryKey: ["pokemons"],
-    queryFn: fetchPokemons,
+    queryFn: ({ pageParam = 0 }) => fetchPokemons(pageParam),
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage.length < 10) return undefined;
+      return pages.length * 10; 
+    },
   });
 
-  // hooks ทั้งหมดต้องเรียกก่อน return อะไร
+  const allPosts = data
+    ? data.pages.flatMap((page, pageIndex) =>
+        page.map((poke, index) => ({
+          id: pageIndex * 10 + index,
+          username: poke.name,
+          avatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+            pageIndex * 10 + index + 1
+          }.png`,
+          image: poke.image,
+          caption: `A wild ${poke.name} appeared!`,
+          timestamp: new Date(),
+        }))
+      )
+    : [];
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    return <p>Error loading Pokémon 😢</p>;
-  }
-
-  // เมื่อข้อมูล Pokemon มาแล้ว ให้แปลงเป็นรูปแบบโพสต์
-  useEffect(() => {
-    if (data) {
-      const pokemonPosts = data.map((poke, index) => ({
-        id: index,
-        username: poke.name,
-        avatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${index + 1}.png`,
-        image: poke.image,
-        caption: `A wild ${poke.name} appeared!`,
-        timestamp: new Date(),
-      }));
-      setAllPosts(pokemonPosts);
-      setHasMore(false); // โหลดหมดแล้ว
-    }
-  }, [data]);
-
-  
-  useEffect(() => {
-    if (searchTerm) {
-      const filtered = allPosts.filter((post) =>
+  const postsToRender = searchTerm
+    ? allPosts.filter((post) =>
         post.caption.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setSearchPosts(filtered);
-    } else {
-      setSearchPosts([]);
-    }
-  }, [searchTerm, allPosts]);
+      )
+    : allPosts;
 
-  const postsToRender = searchTerm ? searchPosts : allPosts;
+  const handleObserver = useCallback(
+    (entries) => {
+      const target = entries[0];
+      if (
+        target.isIntersecting &&
+        hasNextPage &&
+        !isFetchingNextPage &&
+        !searchTerm
+      ) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage, searchTerm]
+  );
+
+  useEffect(() => {
+    const option = {
+      root: null,
+      rootMargin: "20px",
+      threshold: 1.0,
+    };
+
+    const observer = new IntersectionObserver(handleObserver, option);
+    if (loader.current) observer.observe(loader.current);
+
+    return () => {
+      if (loader.current) observer.unobserve(loader.current);
+    };
+  }, [handleObserver]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error loading Pokémon 😢</p>;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -63,9 +83,20 @@ const Feed = ({ searchTerm, onRequireLogin }) => {
         <Post key={post.id} {...post} onRequireLogin={onRequireLogin} />
       ))}
 
-      {!searchTerm && !hasMore && allPosts.length === 0 && (
+      <div
+        ref={loader}
+        style={{ height: "100px", textAlign: "center", padding: "20px" }}
+      >
+        {isFetchingNextPage
+          ? "Loading more..."
+          : hasNextPage
+          ? "Scroll down to load more"
+          : "No more posts"}
+      </div>
+
+      {searchTerm && postsToRender.length === 0 && (
         <div style={{ textAlign: "center", padding: "20px", color: "#999" }}>
-          No posts available.
+          No results found for "{searchTerm}"
         </div>
       )}
     </div>

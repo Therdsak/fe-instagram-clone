@@ -1,49 +1,77 @@
 # Instagram Clone
 
-โปรเจกต์นี้เป็นการสร้าง Instagram Clone ด้วย React, React Query และ TypeScript
+โปรเจคนี้เป็นการทำ Instagram Clone โดยใช้ React เป็น frontend และมีการดึงข้อมูล Pokemon API ผ่าน backend (localhost:3000/api/pokemons) เพื่อแสดงข้อมูลในหน้า Feed
 
-## คุณสมบัติหลัก
+---
 
-- ดึงข้อมูล Pokemon API มาแสดงใน Feed
-- ใช้ React Query สำหรับการจัดการข้อมูลและสถานะการโหลด\
+## Features
 
-## โครงสร้างโปรเจกต์
+- แสดง Feed ของโพสต์ที่มีข้อมูล Pokemon
+- มีระบบ Pagination สำหรับโหลดข้อมูลแบบแบ่งหน้า (Pagination)
+- การดึงข้อมูลแบบ Async/Await ผ่าน API ภายในโปรเจค
+- มีหน้า AuthPage สำหรับระบบ Authentication (ยังไม่แสดงในภาพแต่มีไฟล์ในโครงสร้าง)
+- ใช้ React กับ Redux Toolkit สำหรับการจัดการสถานะของแอป
+- มีการใช้ ESLint เพื่อตรวจสอบคุณภาพของโค้ด
 
-- `src/api/fetchPokemons.ts` - ฟังก์ชันสำหรับดึงข้อมูล Pokemon
-- `src/components/Feed.js` - คอมโพเนนต์หลักสำหรับแสดง Feed
-- `src/components/Post.js` - คอมโพเนนต์สำหรับโพสต์แต่ละโพสต์
-- `src/pages/AuthPage.js` - หน้าล็อกอิน
-- `src/store` - โฟลเดอร์สำหรับ Redux slice และ state management
+---
 
-## การติดตั้ง
+## วิธีการรันโปรเจค
 
-1. คลอนโปรเจกต์นี้ลงในเครื่อง
+1. Clone โปรเจคนี้มาที่เครื่องของคุณ
+
+
 
 ```bash
-git clone <url-โปรเจกต์ของคุณ>
-
-npm install
-
-npm start
-
-
-เครื่องมือและไลบรารี
-
-React
-
-React Query
-
-Redux Toolkit
-
-TypeScript
-
-ESLint
-
-Prettier
-
-ข้อควรระวัง
-
-มีการใช้งาน Pokemon API เป็นตัวอย่างการดึงข้อมูลจาก API 
-
-ต้องรัน API Pokemon ที่เขียนเองก่อนเสมอ
+git clone <url ของ repo>
+cd instagram-clone
 ```
+
+2. ติดตั้ง dependencies ด้วยคำสั่ง
+
+
+```bash
+npm install
+```
+
+
+3. รัน backend server (สมมติ backend รันที่ port 3000)
+
+
+```bash
+npm run backend
+```
+
+
+4. รัน frontend
+
+
+```bash
+npm start
+```
+
+5. เปิดเว็บเบราว์เซอร์แล้วเข้าไปที่
+
+```bash
+http://localhost:3000
+```
+
+## โครงสร้างโปรเจค 
+
+
+instagram-clone/
+│
+├── public/                 # ไฟล์สาธารณะ เช่น index.html, รูปภาพ
+├── src/
+│   ├── api/                # โค้ดสำหรับเรียก API ต่างๆ (เช่น fetchPokemons.ts)
+│   ├── components/         # Components ของ React เช่น Feed, Header, Post
+│   ├── pages/              # หน้าเพจหลัก เช่น AuthPage
+│   ├── store/              # Redux store และ slice ต่างๆ สำหรับ state management
+│   ├── App.js              # Component หลักของโปรเจค
+│   ├── index.js            # จุดเริ่มต้นของ React app
+│   ├── App.css             # CSS หลักของโปรเจค
+│   └── index.css           # CSS เริ่มต้น
+├── package.json            # ข้อมูลโปรเจคและ dependencies
+├── README.md               # ไฟล์นี้
+└── .gitignore              # ไฟล์กำหนดว่าไฟล์ไหนไม่ต้องถูก git ติดตาม
+
+
