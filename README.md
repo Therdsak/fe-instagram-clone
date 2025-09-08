@@ -57,7 +57,7 @@ http://localhost:3000
 
 ## โครงสร้างโปรเจค 
 
-
+```
 instagram-clone/
 │
 ├── public/                 # ไฟล์สาธารณะ เช่น index.html, รูปภาพ
@@ -75,3 +75,4 @@ instagram-clone/
 └── .gitignore              # ไฟล์กำหนดว่าไฟล์ไหนไม่ต้องถูก git ติดตาม
 
 
+```
