@@ -76,3 +76,11 @@ instagram-clone/
 
 
 ```
+
+## การใช้งาน
+
+```
+- กด double click ที่รูปจะเป็นการ Like
+- กด Like หรือ Share ระบบจะนำไป login ก่อนเสมอ
+- account test email : test@gmail.com , password : 1234
+```
