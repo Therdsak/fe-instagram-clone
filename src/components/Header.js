@@ -20,7 +20,6 @@ const AppHeader = ({ onSearchChange, user }) => {
       }}
     >
       <div style={{ fontSize: "22px", fontWeight: "bold" }}>Instagram</div>
-
       <Input
         placeholder="Search"
         prefix={<SearchOutlined />}
